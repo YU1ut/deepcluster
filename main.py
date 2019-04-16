@@ -118,8 +118,8 @@ def main():
     cluster_log = Logger(os.path.join(args.exp, 'clusters'))
 
     # preprocessing of data
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
+    normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
+                                     std=[x/255.0 for x in [63.0, 62.1, 66.7]])
     tra = [transforms.Resize(256),
            transforms.CenterCrop(224),
            transforms.ToTensor(),
