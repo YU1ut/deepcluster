@@ -28,7 +28,7 @@ from util import AverageMeter, Logger, UnifLabelSampler
 
 parser = argparse.ArgumentParser(description='PyTorch Implementation of DeepCluster')
 
-parser.add_argument('data', metavar='DIR', help='path to dataset')
+parser.add_argument('--data', metavar='DIR', help='path to dataset', default='../lemniscate.pytorch/data')
 parser.add_argument('--arch', '-a', type=str, metavar='ARCH',
                     choices=['alexnet', 'vgg16'], default='alexnet',
                     help='CNN architecture (default: alexnet)')
@@ -127,7 +127,8 @@ def main():
 
     # load the data
     end = time.time()
-    dataset = datasets.ImageFolder(args.data, transform=transforms.Compose(tra))
+    # dataset = datasets.ImageFolder(args.data, transform=transforms.Compose(tra))
+    dataset = datasets.cifar(args.data, transform=transforms.Compose(tra))
     if args.verbose: print('Load dataset: {0:.2f} s'.format(time.time() - end))
     dataloader = torch.utils.data.DataLoader(dataset,
                                              batch_size=args.batch,
@@ -153,7 +154,7 @@ def main():
 
         # assign pseudo-labels
         train_dataset = clustering.cluster_assign(deepcluster.images_lists,
-                                                  dataset.imgs)
+                                                  dataset.train_labels)
 
         # uniformely sample per target
         sampler = UnifLabelSampler(int(args.reassign * len(train_dataset)),
