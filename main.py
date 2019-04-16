@@ -128,7 +128,7 @@ def main():
     # load the data
     end = time.time()
     # dataset = datasets.ImageFolder(args.data, transform=transforms.Compose(tra))
-    dataset = datasets.cifar(args.data, transform=transforms.Compose(tra))
+    dataset = datasets.CIFAR10(args.data, transform=transforms.Compose(tra))
     if args.verbose: print('Load dataset: {0:.2f} s'.format(time.time() - end))
     dataloader = torch.utils.data.DataLoader(dataset,
                                              batch_size=args.batch,
