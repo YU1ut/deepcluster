@@ -64,6 +64,7 @@ class ReassignedDataset(data.Dataset):
             tuple: (image, pseudolabel) where pseudolabel is the cluster of index datapoint
         """
         img, pseudolabel = self.imgs[index]
+        img = Image.fromarray(img)
         if self.transform is not None:
             img = self.transform(img)
         return img, pseudolabel

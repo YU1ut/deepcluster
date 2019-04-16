@@ -20,6 +20,7 @@ import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
+from PIL import Image
 
 import clustering
 import models
@@ -120,8 +121,9 @@ def main():
     # preprocessing of data
     normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
                                      std=[x/255.0 for x in [63.0, 62.1, 66.7]])
-    tra = [transforms.Resize(256),
-           transforms.CenterCrop(224),
+    tra = [transforms.Resize(100),
+           transforms.RandomCrop(96),
+           transforms.RandomHorizontalFlip(),
            transforms.ToTensor(),
            normalize]
 
@@ -334,6 +336,7 @@ class MyCIFAR10(datasets.CIFAR10):
             tuple: (image, pseudolabel) where pseudolabel is the cluster of index datapoint
         """
         img, pseudolabel = self.imgs[index]
+        img = Image.fromarray(img)
         if self.transform is not None:
             img = self.transform(img)
         return img, pseudolabel 

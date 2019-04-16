@@ -23,7 +23,7 @@ class AlexNet(nn.Module):
         super(AlexNet, self).__init__()
         self.features = features
         self.classifier = nn.Sequential(nn.Dropout(0.5),
-                            nn.Linear(256 * 6 * 6, 4096),
+                            nn.Linear(256 * 1 * 1, 4096),
                             nn.ReLU(inplace=True),
                             nn.Dropout(0.5),
                             nn.Linear(4096, 4096),
