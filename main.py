@@ -255,15 +255,15 @@ def train(loader, model, crit, opt, epoch):
                 'optimizer' : opt.state_dict()
             }, path)
 
-        target = target.cuda(async=True)
-        input_var = torch.autograd.Variable(input_tensor.cuda())
-        target_var = torch.autograd.Variable(target)
+        target = target.cuda(non_blocking=True)
+        input_var = input_tensor.cuda()
+        target_var = target
 
         output = model(input_var)
         loss = crit(output, target_var)
 
         # record loss
-        losses.update(loss.data[0], input_tensor.size(0))
+        losses.update(loss.item(), input_tensor.size(0))
 
         # compute gradient and do SGD step
         opt.zero_grad()
@@ -295,7 +295,7 @@ def compute_features(dataloader, model, N):
     with torch.no_grad():
         # discard the label information in the dataloader
         for i, (input_tensor, _) in enumerate(dataloader):
-            input_var = torch.autograd.Variable(input_tensor.cuda())
+            input_var = input_tensor.cuda()
             aux = model(input_var).data.cpu().numpy()
 
             if i == 0:
