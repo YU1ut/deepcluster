@@ -23,7 +23,7 @@ class AlexNet(nn.Module):
         super(AlexNet, self).__init__()
         self.features = features
         self.classifier = nn.Sequential(nn.Dropout(0.5),
-                            nn.Linear(256 * 1 * 1, 4096),
+                            nn.Linear(256 * 2 * 2, 4096),
                             nn.ReLU(inplace=True),
                             nn.Dropout(0.5),
                             nn.Linear(4096, 4096),
@@ -54,7 +54,7 @@ class AlexNet(nn.Module):
         if self.sobel:
             x = self.sobel(x)
         x = self.features(x)
-        x = x.view(x.size(0), 256 * 1 * 1)
+        x = x.view(x.size(0), 256 * 2 * 2)
         x = self.classifier(x)
         if self.top_layer:
             x = self.top_layer(x)
