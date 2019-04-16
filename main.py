@@ -28,7 +28,7 @@ from util import AverageMeter, Logger, UnifLabelSampler
 
 parser = argparse.ArgumentParser(description='PyTorch Implementation of DeepCluster')
 
-parser.add_argument('--data', metavar='DIR', help='path to dataset', default='./cifar10')
+parser.add_argument('--data', metavar='DIR', help='path to dataset', default='../lemniscate.pytorch/data')
 parser.add_argument('--arch', '-a', type=str, metavar='ARCH',
                     choices=['alexnet', 'vgg16'], default='alexnet',
                     help='CNN architecture (default: alexnet)')
@@ -127,7 +127,7 @@ def main():
 
     # load the data
     end = time.time()
-    dataset = datasets.ImageFolder(args.data, transform=transforms.Compose(tra))
+    dataset = MyCIFAR10(args.data, transform=transforms.Compose(tra))
     # dataset = datasets.CIFAR10(args.data, transform=transforms.Compose(tra))
     if args.verbose: print('Load dataset: {0:.2f} s'.format(time.time() - end))
     dataloader = torch.utils.data.DataLoader(dataset,
@@ -317,6 +317,26 @@ def compute_features(dataloader, model, N):
                     .format(i, len(dataloader), batch_time=batch_time))
     return features
 
+class MyCIFAR10(datasets.CIFAR10):
+    def __init__(self, root, train=True,
+                 transform=None, target_transform=None,
+                 download=False):
+        super(MyCIFAR10, self).__init__(root, train=train,
+            transform=transform, target_transform=target_transform,
+            download=download)
+        self.imgs = [(train_img, train_label) for train_img, train_label in zip(self.train_data, self.train_labels)]
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): index of data
+        Returns:
+            tuple: (image, pseudolabel) where pseudolabel is the cluster of index datapoint
+        """
+        img, pseudolabel = self.imgs[index]
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, pseudolabel 
 
 if __name__ == '__main__':
     main()
