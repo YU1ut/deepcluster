@@ -349,7 +349,7 @@ class MyMNIST(datasets.MNIST):
         super(MyMNIST, self).__init__(root, train=train,
             transform=transform, target_transform=target_transform,
             download=download)
-        self.imgs = [(train_img, int(train_label)) for train_img, train_label in zip(self.data, self.targets)]
+        self.imgs = [(train_img, int(train_label)) for train_img, train_label in zip(self.train_data, self.train_labels)]
 
     def __getitem__(self, index):
         """
