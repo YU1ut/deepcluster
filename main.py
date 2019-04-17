@@ -119,8 +119,8 @@ def main():
     cluster_log = Logger(os.path.join(args.exp, 'clusters'))
 
     # preprocessing of data
-    normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
-                                     std=[x/255.0 for x in [63.0, 62.1, 66.7]])
+    normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                                     std=[0.5, 0.5, 0.5])
     tra = [transforms.Resize(100),
            transforms.RandomCrop(96),
            transforms.RandomHorizontalFlip(),
@@ -129,7 +129,8 @@ def main():
 
     # load the data
     end = time.time()
-    dataset = MyCIFAR10(args.data, transform=transforms.Compose(tra))
+    # dataset = MyCIFAR10(args.data, transform=transforms.Compose(tra))
+    dataset = MyMNIST(args.data, transform=transforms.Compose(tra))
     # dataset = datasets.CIFAR10(args.data, transform=transforms.Compose(tra))
     if args.verbose: print('Load dataset: {0:.2f} s'.format(time.time() - end))
     dataloader = torch.utils.data.DataLoader(dataset,
@@ -337,6 +338,28 @@ class MyCIFAR10(datasets.CIFAR10):
         """
         img, pseudolabel = self.imgs[index]
         img = Image.fromarray(img)
+        if self.transform is not None:
+            img = self.transform(img)
+        return img, pseudolabel 
+
+class MyMNIST(datasets.MNIST):
+    def __init__(self, root, train=True,
+                 transform=None, target_transform=None,
+                 download=False):
+        super(MyMNIST, self).__init__(root, train=train,
+            transform=transform, target_transform=target_transform,
+            download=download)
+        self.imgs = [(train_img, int(train_label)) for train_img, train_label in zip(self.data, self.targets)]
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): index of data
+        Returns:
+            tuple: (image, pseudolabel) where pseudolabel is the cluster of index datapoint
+        """
+        img, pseudolabel = self.imgs[index]
+        img = Image.fromarray(img.numpy(), mode='L').convert("RGB")
         if self.transform is not None:
             img = self.transform(img)
         return img, pseudolabel 

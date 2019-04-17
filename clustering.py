@@ -64,7 +64,7 @@ class ReassignedDataset(data.Dataset):
             tuple: (image, pseudolabel) where pseudolabel is the cluster of index datapoint
         """
         img, pseudolabel = self.imgs[index]
-        img = Image.fromarray(img)
+        img = Image.fromarray(img.numpy(), mode='L').convert("RGB")
         if self.transform is not None:
             img = self.transform(img)
         return img, pseudolabel
@@ -136,9 +136,12 @@ def cluster_assign(images_lists, dataset):
     for cluster, images in enumerate(images_lists):
         image_indexes.extend(images)
         pseudolabels.extend([cluster] * len(images))
-
+    '''
     normalize = transforms.Normalize(mean=[x/255.0 for x in [125.3, 123.0, 113.9]],
                                      std=[x/255.0 for x in [63.0, 62.1, 66.7]])
+    '''
+    normalize = transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                                     std=[0.5, 0.5, 0.5])
     t = transforms.Compose([transforms.Resize(100),
            transforms.RandomCrop(96),
            transforms.RandomHorizontalFlip(),
