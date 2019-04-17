@@ -345,7 +345,7 @@ class MyCIFAR10(datasets.CIFAR10):
 class MyMNIST(datasets.MNIST):
     def __init__(self, root, train=True,
                  transform=None, target_transform=None,
-                 download=False):
+                 download=True):
         super(MyMNIST, self).__init__(root, train=train,
             transform=transform, target_transform=target_transform,
             download=download)
